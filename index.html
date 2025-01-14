@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<head>
+  <title>Catch the Pixel</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid white;
+    }
+    #d {
+        display: flex;
+        width: 304px;
+        height: 20px;
+    }
+    #e{
+        display: flex;
+        justify-content: center;
+        width: 50%;
+        height: 100%;
+        background: green;
+        border: 0;
+    }
+    #h{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50%;
+        height: 100%;
+        background: red;
+        border: 0;
+    }
+    h1,p{margin: 5px;}
+.selected {
+  color: white;
+  font-weight: bold;
+}
+  </style>
+</head>
+<body>
+  <div >
+    <h1>Catch the Pixel!</h1>
+    <p>Score: <span id="score">0</span></p>
+    <p>Level: <span id="lvl">Beginner</span></p>
+
+    <div id="d">
+        <button id="e" onClick="btClk('e')">Easy</button>
+        <button id="h" onClick="btClk('h')">Hard</button>
+    </div>
+    <canvas id="game" width="300" height="300"></canvas>
+  </div>
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const lvlEl = document.getElementById('lvl');
+    let score = 0;
+    let pixelSize;
+    window.onload = () => btClk("e");
+    x = Math.random()*(canvas.width-pixelSize);
+    y = Math.random()*(canvas.height-pixelSize);
+    let dx = 2;
+    let dy = 2;
+
+
+    function setPx(px,sp){
+      pixelSize = px;
+      score = 0;
+      scoreEl.textContent = 0;
+      x = Math.random() * (canvas.width - px);
+      y = Math.random() * (canvas.height - px);
+      dx = sp;
+      dy = sp;
+    }
+
+
+    function btClk(dif) {
+  setPx(dif === "e" ? 17 : 10, dif === "e" ? 2 : 3);
+  document.getElementById('e').classList.toggle('selected', dif === "e");
+  document.getElementById('h').classList.toggle('selected', dif === "h");
+}
+
+    function drawPixel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x, y, pixelSize, pixelSize);
+    }
+
+    function update() {
+    const c=Math.abs(dx);
+    lvlEl.textContent =c<3?'Beginner':c<4?'Intermediate':c<5?'Advanced':c<5?'Expert':'GOD';
+      x += dx;
+      y += dy;
+
+      if (x <= 0 || x + pixelSize >= canvas.width) dx = -dx;
+      if (y <= 0 || y + pixelSize >= canvas.height) dy = -dy;
+
+      drawPixel();
+    }
+
+    canvas.addEventListener('click', (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX-rect.left;
+      const mouseY = event.clientY-rect.top;
+
+      if (
+        mouseX >= x &&mouseX <= x + pixelSize &&mouseY >= y &&mouseY <= y + pixelSize
+      ) {
+        score++;
+        scoreEl.textContent = score;
+        dx *= 1.1;
+        dy *= 1.1;
+        x = Math.random()*(canvas.width-pixelSize);
+        y = Math.random()*(canvas.height-pixelSize);
+      }
+    });
+
+    setInterval(update, 20);
+  </script>
+</body>
+</html>
+
+
+
